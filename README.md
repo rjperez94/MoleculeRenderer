@@ -13,8 +13,8 @@
 
 ### Linking the UI Library
 
-8. Right click on your `Java Project` --> `Build Path` --> `Add External Archives`
-9. Select `ecs100.jar` and link it to the project. That JAR will be in the directory where you downloaded ZIP
+9. Right click on your `Java Project` --> `Build Path` --> `Add External Archives`
+10. Select `ecs100.jar` and link it to the project. That JAR will be in the directory where you downloaded ZIP
 
 ## Running the program
 
