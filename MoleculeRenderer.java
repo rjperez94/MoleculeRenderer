@@ -1,4 +1,6 @@
 import ecs100.*;
+
+import javax.swing.*;
 import java.awt.Color;
 import java.util.*;
 import java.io.*;
@@ -33,8 +35,12 @@ import java.io.*;
  */
 
 public class MoleculeRenderer implements UIButtonListener {
-
     // Fields
+
+    // Load required elements table file using a JFileChooser
+    private JFileChooser fileChooser = new JFileChooser();
+    private final String ELEM_TABLE_FILENAME = "element-table.txt";
+
     // Map containing the size and color of each atom type.
     private Map<String,Element> elementTable; 
 
@@ -71,7 +77,40 @@ public class MoleculeRenderer implements UIButtonListener {
         UI.addButton("ZoomOut", this);
         
         elementTable = new HashMap<String, Element>();
-        readElementTable();    //  Read the element table first
+        chooseDir();
+    }
+
+    private void chooseDir() {
+        File test = null;
+
+        // set up the file chooser
+        fileChooser.setCurrentDirectory(new File("."));
+        fileChooser.setDialogTitle("Select input directory");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        // run the file chooser and check the user didn't hit cancel
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            // get the files in the selected directory and match them to
+            // the files we need.
+            File directory = fileChooser.getSelectedFile();
+            File[] files = directory.listFiles();
+
+            for (File f : files) {
+                if (f.getName().equals(ELEM_TABLE_FILENAME)) {
+                    test = f;
+                }
+            }
+
+            // check none of the files are missing, and call the load
+            // method in your code.
+            if (test == null) {
+                JOptionPane.showMessageDialog(null, "Directory does not contain correct files", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            } else {
+                readElementTable(test);    //  Read the element table
+            }
+        }
     }
 
     /** Respond to button presses.
@@ -189,11 +228,11 @@ public class MoleculeRenderer implements UIButtonListener {
     /** (Completion) Reads a file containing radius and color information about each type of
      *  atom and stores the info in a Map, using the atom type as a key
      */
-    private void readElementTable() {
+    private void readElementTable(File path) {
         UI.println("Reading the element table file ...");
         try {
             
-            Scanner scan = new Scanner(new File("element-table.txt"));
+            Scanner scan = new Scanner(path.getAbsoluteFile());
             
             while (scan.hasNext()) {
                 Element elem = new Element (scan);
@@ -395,7 +434,7 @@ public class MoleculeRenderer implements UIButtonListener {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new MoleculeRenderer();
     }
 }
